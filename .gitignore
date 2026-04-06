@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+output/
+__pdf_extract.txt
+3522 BULUT BİLİŞİM DERSİ PROJE 2.pdf

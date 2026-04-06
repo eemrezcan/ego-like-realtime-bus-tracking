@@ -1,0 +1,155 @@
+[
+  {
+    "stop_id": "STOP_KIZ_01",
+    "name": "Kizilay Meydan",
+    "district": "Cankaya",
+    "lat": 39.92077,
+    "lon": 32.85411,
+    "stop_type": "hub",
+    "activity_tags": ["transfer", "business", "shopping"]
+  },
+  {
+    "stop_id": "STOP_SIH_02",
+    "name": "Sihhiye Koprusu",
+    "district": "Cankaya",
+    "lat": 39.92548,
+    "lon": 32.85234,
+    "stop_type": "transfer",
+    "activity_tags": ["transfer", "hospital", "office"]
+  },
+  {
+    "stop_id": "STOP_BSL_03",
+    "name": "Besevler Metro",
+    "district": "Cankaya",
+    "lat": 39.92860,
+    "lon": 32.82190,
+    "stop_type": "transfer",
+    "activity_tags": ["metro", "education", "residential"]
+  },
+  {
+    "stop_id": "STOP_BHV_04",
+    "name": "Bahcelievler 7 Cadde",
+    "district": "Cankaya",
+    "lat": 39.92590,
+    "lon": 32.81340,
+    "stop_type": "residential",
+    "activity_tags": ["residential", "shopping", "food"]
+  },
+  {
+    "stop_id": "STOP_EMK_05",
+    "name": "Emek Istasyonu",
+    "district": "Cankaya",
+    "lat": 39.91890,
+    "lon": 32.80480,
+    "stop_type": "residential",
+    "activity_tags": ["residential", "metro", "transfer"]
+  },
+  {
+    "stop_id": "STOP_AST_06",
+    "name": "ASTI Terminal",
+    "district": "Cankaya",
+    "lat": 39.91800,
+    "lon": 32.80120,
+    "stop_type": "terminal",
+    "activity_tags": ["terminal", "intercity", "transfer"]
+  },
+  {
+    "stop_id": "STOP_SOG_07",
+    "name": "Sogutozu",
+    "district": "Cankaya",
+    "lat": 39.91640,
+    "lon": 32.81060,
+    "stop_type": "business",
+    "activity_tags": ["business", "hotel", "office"]
+  },
+  {
+    "stop_id": "STOP_ULS_08",
+    "name": "Ulus Meydan",
+    "district": "Altindag",
+    "lat": 39.94169,
+    "lon": 32.85456,
+    "stop_type": "hub",
+    "activity_tags": ["transfer", "historic", "shopping"]
+  },
+  {
+    "stop_id": "STOP_OPR_09",
+    "name": "Opera",
+    "district": "Altindag",
+    "lat": 39.93670,
+    "lon": 32.85710,
+    "stop_type": "civic",
+    "activity_tags": ["culture", "office", "transfer"]
+  },
+  {
+    "stop_id": "STOP_KOL_10",
+    "name": "Kolej",
+    "district": "Cankaya",
+    "lat": 39.92710,
+    "lon": 32.86320,
+    "stop_type": "education",
+    "activity_tags": ["education", "residential", "transfer"]
+  },
+  {
+    "stop_id": "STOP_KRT_11",
+    "name": "Kurtulus Parki",
+    "district": "Cankaya",
+    "lat": 39.92360,
+    "lon": 32.87270,
+    "stop_type": "residential",
+    "activity_tags": ["residential", "park", "school"]
+  },
+  {
+    "stop_id": "STOP_CBC_12",
+    "name": "Cebeci Kampus",
+    "district": "Cankaya",
+    "lat": 39.92020,
+    "lon": 32.87980,
+    "stop_type": "university",
+    "activity_tags": ["university", "hospital", "residential"]
+  },
+  {
+    "stop_id": "STOP_DKM_13",
+    "name": "Dikimevi",
+    "district": "Cankaya",
+    "lat": 39.91590,
+    "lon": 32.88620,
+    "stop_type": "hub",
+    "activity_tags": ["transfer", "residential", "shopping"]
+  },
+  {
+    "stop_id": "STOP_MLT_14",
+    "name": "Maltepe",
+    "district": "Cankaya",
+    "lat": 39.92960,
+    "lon": 32.84160,
+    "stop_type": "business",
+    "activity_tags": ["office", "transfer", "shopping"]
+  },
+  {
+    "stop_id": "STOP_TDG_15",
+    "name": "Tandogan",
+    "district": "Cankaya",
+    "lat": 39.93320,
+    "lon": 32.83380,
+    "stop_type": "transfer",
+    "activity_tags": ["transfer", "civic", "education"]
+  },
+  {
+    "stop_id": "STOP_MKK_16",
+    "name": "Milli Kutuphane",
+    "district": "Cankaya",
+    "lat": 39.92430,
+    "lon": 32.82870,
+    "stop_type": "transfer",
+    "activity_tags": ["metro", "office", "education"]
+  },
+  {
+    "stop_id": "STOP_BLK_17",
+    "name": "Bilkent Koprusu",
+    "district": "Cankaya",
+    "lat": 39.89460,
+    "lon": 32.76790,
+    "stop_type": "campus",
+    "activity_tags": ["campus", "business", "residential"]
+  }
+]

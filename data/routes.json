@@ -1,0 +1,174 @@
+[
+  {
+    "line_id": "LINE_510",
+    "route_name": "Kizilay - Sogutozu",
+    "supports_reverse": true,
+    "terminal_stop_ids": ["STOP_KIZ_01", "STOP_SOG_07"],
+    "default_dwell_seconds": 20,
+    "default_terminal_wait_seconds": 90,
+    "stop_sequence": [
+      "STOP_KIZ_01",
+      "STOP_SIH_02",
+      "STOP_BSL_03",
+      "STOP_BHV_04",
+      "STOP_EMK_05",
+      "STOP_AST_06",
+      "STOP_SOG_07"
+    ],
+    "segments": [
+      {
+        "from_stop_id": "STOP_KIZ_01",
+        "to_stop_id": "STOP_SIH_02",
+        "distance_km": 0.6,
+        "planned_seconds": 120
+      },
+      {
+        "from_stop_id": "STOP_SIH_02",
+        "to_stop_id": "STOP_BSL_03",
+        "distance_km": 2.8,
+        "planned_seconds": 240
+      },
+      {
+        "from_stop_id": "STOP_BSL_03",
+        "to_stop_id": "STOP_BHV_04",
+        "distance_km": 0.9,
+        "planned_seconds": 110
+      },
+      {
+        "from_stop_id": "STOP_BHV_04",
+        "to_stop_id": "STOP_EMK_05",
+        "distance_km": 1.2,
+        "planned_seconds": 140
+      },
+      {
+        "from_stop_id": "STOP_EMK_05",
+        "to_stop_id": "STOP_AST_06",
+        "distance_km": 0.7,
+        "planned_seconds": 100
+      },
+      {
+        "from_stop_id": "STOP_AST_06",
+        "to_stop_id": "STOP_SOG_07",
+        "distance_km": 1.4,
+        "planned_seconds": 160
+      }
+    ]
+  },
+  {
+    "line_id": "LINE_520",
+    "route_name": "Ulus - Dikimevi",
+    "supports_reverse": true,
+    "terminal_stop_ids": ["STOP_ULS_08", "STOP_DKM_13"],
+    "default_dwell_seconds": 18,
+    "default_terminal_wait_seconds": 75,
+    "stop_sequence": [
+      "STOP_ULS_08",
+      "STOP_OPR_09",
+      "STOP_SIH_02",
+      "STOP_KOL_10",
+      "STOP_KRT_11",
+      "STOP_CBC_12",
+      "STOP_DKM_13"
+    ],
+    "segments": [
+      {
+        "from_stop_id": "STOP_ULS_08",
+        "to_stop_id": "STOP_OPR_09",
+        "distance_km": 0.8,
+        "planned_seconds": 110
+      },
+      {
+        "from_stop_id": "STOP_OPR_09",
+        "to_stop_id": "STOP_SIH_02",
+        "distance_km": 1.3,
+        "planned_seconds": 150
+      },
+      {
+        "from_stop_id": "STOP_SIH_02",
+        "to_stop_id": "STOP_KOL_10",
+        "distance_km": 1.0,
+        "planned_seconds": 120
+      },
+      {
+        "from_stop_id": "STOP_KOL_10",
+        "to_stop_id": "STOP_KRT_11",
+        "distance_km": 0.9,
+        "planned_seconds": 120
+      },
+      {
+        "from_stop_id": "STOP_KRT_11",
+        "to_stop_id": "STOP_CBC_12",
+        "distance_km": 0.8,
+        "planned_seconds": 100
+      },
+      {
+        "from_stop_id": "STOP_CBC_12",
+        "to_stop_id": "STOP_DKM_13",
+        "distance_km": 0.9,
+        "planned_seconds": 110
+      }
+    ]
+  },
+  {
+    "line_id": "LINE_530",
+    "route_name": "Kizilay - Bilkent Koprusu",
+    "supports_reverse": true,
+    "terminal_stop_ids": ["STOP_KIZ_01", "STOP_BLK_17"],
+    "default_dwell_seconds": 22,
+    "default_terminal_wait_seconds": 90,
+    "stop_sequence": [
+      "STOP_KIZ_01",
+      "STOP_MLT_14",
+      "STOP_TDG_15",
+      "STOP_BSL_03",
+      "STOP_MKK_16",
+      "STOP_EMK_05",
+      "STOP_SOG_07",
+      "STOP_BLK_17"
+    ],
+    "segments": [
+      {
+        "from_stop_id": "STOP_KIZ_01",
+        "to_stop_id": "STOP_MLT_14",
+        "distance_km": 1.6,
+        "planned_seconds": 170
+      },
+      {
+        "from_stop_id": "STOP_MLT_14",
+        "to_stop_id": "STOP_TDG_15",
+        "distance_km": 0.9,
+        "planned_seconds": 120
+      },
+      {
+        "from_stop_id": "STOP_TDG_15",
+        "to_stop_id": "STOP_BSL_03",
+        "distance_km": 1.1,
+        "planned_seconds": 130
+      },
+      {
+        "from_stop_id": "STOP_BSL_03",
+        "to_stop_id": "STOP_MKK_16",
+        "distance_km": 0.9,
+        "planned_seconds": 110
+      },
+      {
+        "from_stop_id": "STOP_MKK_16",
+        "to_stop_id": "STOP_EMK_05",
+        "distance_km": 1.4,
+        "planned_seconds": 150
+      },
+      {
+        "from_stop_id": "STOP_EMK_05",
+        "to_stop_id": "STOP_SOG_07",
+        "distance_km": 0.8,
+        "planned_seconds": 100
+      },
+      {
+        "from_stop_id": "STOP_SOG_07",
+        "to_stop_id": "STOP_BLK_17",
+        "distance_km": 5.9,
+        "planned_seconds": 420
+      }
+    ]
+  }
+]

@@ -1,0 +1,9 @@
+services:
+  mqtt-broker:
+    image: eclipse-mosquitto:2.0.22
+    container_name: ego-sim-mqtt-broker
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./infra/local/mosquitto/config:/mosquitto/config:ro
+    restart: unless-stopped

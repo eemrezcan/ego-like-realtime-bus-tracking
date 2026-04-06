@@ -1,0 +1,35 @@
+[
+  {
+    "line_id": "LINE_510",
+    "public_code": "510",
+    "name": "Kizilay - Sogutozu",
+    "service_type": "urban_bus",
+    "color_hex": "#D1495B",
+    "vehicle_capacity": 48,
+    "nominal_headway_seconds": 210,
+    "service_start": "06:00",
+    "service_end": "23:30"
+  },
+  {
+    "line_id": "LINE_520",
+    "public_code": "520",
+    "name": "Ulus - Dikimevi",
+    "service_type": "urban_bus",
+    "color_hex": "#00798C",
+    "vehicle_capacity": 48,
+    "nominal_headway_seconds": 240,
+    "service_start": "06:00",
+    "service_end": "23:30"
+  },
+  {
+    "line_id": "LINE_530",
+    "public_code": "530",
+    "name": "Kizilay - Bilkent Koprusu",
+    "service_type": "urban_bus",
+    "color_hex": "#EDAe49",
+    "vehicle_capacity": 52,
+    "nominal_headway_seconds": 300,
+    "service_start": "06:00",
+    "service_end": "23:00"
+  }
+]
