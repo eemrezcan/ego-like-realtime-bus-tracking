@@ -205,6 +205,36 @@ Bu, hedeflenen mimarinin asagidaki zincirle gerceklestigini gostermektedir:
 
 `Simulator -> AWS IoT Core -> Kinesis -> Lambda -> DynamoDB`
 
+### 5. FastAPI Uzerinden DynamoDB Okuma Testi
+
+API katmani `dynamodb` modunda, `AWS_PROFILE=eemrezcan` ve `AWS_REGION=eu-central-1` ayarlari ile calistirilmistir.
+
+Yerel dogrulamada `uvicorn` kisa sureli olarak ayaga kaldirilmis ve asagidaki endpoint'ler basariyla cevap donmustur:
+
+- `/health`
+- `/summary`
+- `/buses`
+
+Bu testte API, `bus_current_state` tablosundaki gercek AWS verisini okuyabilmistir. Ornek olarak `BUS_510_01`, `BUS_510_02` ve `BUS_510_03` kayitlari line name ve turetilmis alanlarla birlikte endpoint cevabinda gorulmustur.
+
+Bu dogrulama, asagidaki zincirin de hazir oldugunu gostermektedir:
+
+`DynamoDB -> FastAPI`
+
+### 6. Dashboard Uzerinden AWS Verisi Gostermi
+
+FastAPI uygulamasi `dynamodb` modunda `bus_current_state` tablosuna bagli olarak ayaga kaldirilmistir. Ardindan Streamlit dashboard `DASHBOARD_API_BASE_URL` uzerinden bu API'ye baglanmis ve sorunsuz acilmistir.
+
+Dogrulanan noktalar:
+
+- API health cevabi `storage_mode=dynamodb` donmustur
+- API summary cevabi gercek AWS verisiyle gelmistir
+- Streamlit dashboard HTTP `200` ile cevap vermistir
+
+Bu adim, asagidaki tam zincirin goruntuleme katmanina kadar hazir oldugunu gostermektedir:
+
+`Simulator -> AWS IoT Core -> Kinesis -> Lambda -> DynamoDB -> FastAPI -> Streamlit`
+
 ## Karsilasilan Teknik Notlar
 
 - Ilk Lambda deploy denemesinde `AWS_REGION` ortam degiskenini elle set etmeye calismak hata vermistir. Bu alan Lambda tarafinda rezerve oldugu icin script'ten cikarilmistir.
@@ -237,4 +267,4 @@ Bu dosyalar final raporda "kurulum tekrar edilebilirligi" ve "mimari disiplin" a
 
 ## Final Rapora Koyulabilecek Ozet Metin
 
-`AWS tarafinda kimlik dogrulama icin IAM Identity Center (SSO) kullanilmistir. Kaynaklar eu-central-1 bolgesinde olusturulmus; iki adet DynamoDB tablosu (bus_current_state, telemetry_history), bir adet Kinesis Data Stream (ego-bus-telemetry-stream), bir adet Lambda function (ego-bus-processor), buna bagli IAM execution role, bir adet IoT topic rule ve simulator cihaz sertifikasi aktif hale getirilmistir. Kinesis ile Lambda arasinda event source mapping kurularak verinin otomatik islenmesi saglanmis; hem AWS CLI ile IoT Core uzerinden, hem de dogrudan simulator uygulamasi ile MQTT/TLS uzerinden gonderilen ornek telemetri kayitlarinin bulutta islenip DynamoDB'ye yazildigi dogrulanmistir.`
+`AWS tarafinda kimlik dogrulama icin IAM Identity Center (SSO) kullanilmistir. Kaynaklar eu-central-1 bolgesinde olusturulmus; iki adet DynamoDB tablosu (bus_current_state, telemetry_history), bir adet Kinesis Data Stream (ego-bus-telemetry-stream), bir adet Lambda function (ego-bus-processor), buna bagli IAM execution role, bir adet IoT topic rule ve simulator cihaz sertifikasi aktif hale getirilmistir. Kinesis ile Lambda arasinda event source mapping kurularak verinin otomatik islenmesi saglanmis; hem AWS CLI ile IoT Core uzerinden, hem de dogrudan simulator uygulamasi ile MQTT/TLS uzerinden gonderilen ornek telemetri kayitlarinin bulutta islenip DynamoDB'ye yazildigi dogrulanmistir. Son olarak FastAPI katmaninin `dynamodb` modunda bu verileri okuyabildigi ve Streamlit dashboard'un ayni API uzerinden gercek AWS verisini gosterebildigi kanitlanmistir.`

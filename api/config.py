@@ -14,6 +14,7 @@ except ImportError:  # pragma: no cover - Optional in non-local runtimes.
 @dataclass(frozen=True)
 class ApiSettings:
     storage_mode: str
+    aws_profile: str | None
     aws_region: str | None
     dynamodb_endpoint_url: str | None
     current_state_table_name: str
@@ -36,6 +37,7 @@ def load_api_settings() -> ApiSettings:
 
     return ApiSettings(
         storage_mode=storage_mode,
+        aws_profile=_optional_env("AWS_PROFILE"),
         aws_region=_optional_env("AWS_REGION"),
         dynamodb_endpoint_url=_optional_env("DDB_ENDPOINT_URL"),
         current_state_table_name=os.getenv("DDB_CURRENT_STATE_TABLE", "bus_current_state"),

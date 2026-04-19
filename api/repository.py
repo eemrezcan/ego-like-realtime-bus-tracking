@@ -64,7 +64,10 @@ class DynamoDbReadRepository:
         if not settings.aws_region:
             raise ValueError("DynamoDB modu icin AWS_REGION zorunludur.")
 
-        session = boto3.session.Session(region_name=settings.aws_region)
+        session = boto3.session.Session(
+            profile_name=settings.aws_profile,
+            region_name=settings.aws_region,
+        )
         dynamodb = session.resource(
             "dynamodb",
             endpoint_url=settings.dynamodb_endpoint_url,
@@ -101,4 +104,3 @@ def _deserialize_value(value: object) -> object:
     if isinstance(value, list):
         return [_deserialize_value(item) for item in value]
     return value
-

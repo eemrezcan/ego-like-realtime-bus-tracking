@@ -76,6 +76,7 @@ class ApiServiceTests(unittest.TestCase):
         )
         settings = ApiSettings(
             storage_mode="jsonl",
+            aws_profile=None,
             aws_region=None,
             dynamodb_endpoint_url=None,
             current_state_table_name="bus_current_state",

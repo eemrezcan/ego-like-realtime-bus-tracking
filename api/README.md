@@ -60,6 +60,7 @@ Kaynak:
 AWS tarafinda:
 
 - `API_STORAGE_MODE=dynamodb`
+- `AWS_PROFILE=<profil>` yerel gelistirmede istege bagli ama tavsiye edilir
 - `AWS_REGION=<bolge>`
 - `DDB_CURRENT_STATE_TABLE=bus_current_state`
 - `DDB_ENDPOINT_URL=` istege bagli
