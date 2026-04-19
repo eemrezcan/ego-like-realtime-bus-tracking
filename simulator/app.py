@@ -109,6 +109,11 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Lokal testte iterasyonlar arasinda bekleme yapma.",
     )
+    parser.add_argument(
+        "--continuous",
+        action="store_true",
+        help="Simulatoru durdurulana kadar surekli calistir.",
+    )
     return parser
 
 
@@ -139,16 +144,18 @@ def main() -> int:
     print(
         (
             f"Simulator basladi: {len(engine.buses)} otobus, "
-            f"{args.steps} adim, {args.interval_seconds}s aralik, "
+            f"{'surekli akis' if args.continuous else f'{args.steps} adim'}, "
+            f"{args.interval_seconds}s aralik, "
             f"output={args.output}"
         ),
         file=sys.stderr,
     )
 
     simulated_time = datetime.now(timezone.utc)
+    step_index = 0
 
     try:
-        for step_index in range(args.steps):
+        while args.continuous or step_index < args.steps:
             simulated_time += timedelta(seconds=args.interval_seconds)
             events = engine.step(
                 observed_at=simulated_time,
@@ -156,12 +163,20 @@ def main() -> int:
             )
             for payload in events:
                 publisher.publish(args.topic, payload)
+            step_index += 1
             print(
-                f"Adim {step_index + 1}/{args.steps}: {len(events)} event uretildi.",
+                (
+                    f"Adim {step_index}: {len(events)} event uretildi."
+                    if args.continuous
+                    else f"Adim {step_index}/{args.steps}: {len(events)} event uretildi."
+                ),
                 file=sys.stderr,
             )
-            if not args.no_sleep and step_index < args.steps - 1:
+            should_sleep = args.continuous or step_index < args.steps
+            if not args.no_sleep and should_sleep:
                 time.sleep(args.interval_seconds)
+    except KeyboardInterrupt:
+        print("Simulator kullanici tarafindan durduruldu.", file=sys.stderr)
     finally:
         publisher.close()
 

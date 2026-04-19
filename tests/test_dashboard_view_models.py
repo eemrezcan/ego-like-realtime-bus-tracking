@@ -61,6 +61,8 @@ class DashboardViewModelTests(unittest.TestCase):
         self.assertEqual(len(frame), 2)
         self.assertIn("lat", frame.columns)
         self.assertIn("color_hex", frame.columns)
+        self.assertIn("color_rgba", frame.columns)
+        self.assertIn("marker_radius", frame.columns)
 
     def test_filter_buses_by_line_respects_selection(self) -> None:
         filtered = filter_buses_by_line(self.buses, "LINE_520")

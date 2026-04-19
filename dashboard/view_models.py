@@ -11,6 +11,12 @@ OCCUPANCY_COLORS = {
     "yuksek": "#D1495B",
 }
 
+OCCUPANCY_RGB_COLORS = {
+    "dusuk": [42, 157, 143, 220],
+    "orta": [237, 174, 73, 220],
+    "yuksek": [209, 73, 91, 220],
+}
+
 
 def build_bus_table_rows(buses: list[dict[str, Any]]) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
@@ -34,6 +40,7 @@ def build_bus_table_rows(buses: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def build_map_dataframe(buses: list[dict[str, Any]]) -> pd.DataFrame:
     rows: list[dict[str, Any]] = []
     for bus in buses:
+        occupancy_level = str(bus["estimated_occupancy_level"])
         rows.append(
             {
                 "lat": float(bus["lat"]),
@@ -43,11 +50,16 @@ def build_map_dataframe(buses: list[dict[str, Any]]) -> pd.DataFrame:
                 "line_name": bus["line_name"],
                 "next_stop_name": bus["next_stop_name"],
                 "estimated_eta_sec": int(bus["estimated_eta_sec"]),
-                "estimated_occupancy_level": bus["estimated_occupancy_level"],
+                "estimated_occupancy_level": occupancy_level,
                 "color_hex": OCCUPANCY_COLORS.get(
-                    str(bus["estimated_occupancy_level"]),
+                    occupancy_level,
                     "#3A86FF",
                 ),
+                "color_rgba": OCCUPANCY_RGB_COLORS.get(
+                    occupancy_level,
+                    [58, 134, 255, 220],
+                ),
+                "marker_radius": 80,
             }
         )
     return pd.DataFrame(rows)
@@ -68,4 +80,3 @@ def summarize_delay_label(delayed_bus_count: int) -> str:
     if delayed_bus_count <= 2:
         return "Hafif gecikme"
     return "Yogun gecikme"
-

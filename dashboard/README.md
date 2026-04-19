@@ -48,6 +48,21 @@ Kaynak:
 
 - `DASHBOARD_API_BASE_URL=http://127.0.0.1:8000`
 - `DASHBOARD_DEFAULT_LINE=`
+- `DASHBOARD_AUTO_REFRESH_SECONDS=5`
+
+## Canli Hareket Notu
+
+Dashboard kendi basina veri uretmez; sadece API uzerinden gelen son durumu gosterir.
+
+Bu nedenle haritadaki otobuslerin hareket etmesi icin simulatorun surekli veri gonderiyor olmasi gerekir.
+
+Onerilen canli akis:
+
+```powershell
+.\.venv\Scripts\python.exe -m simulator --continuous --interval-seconds 3 --output mqtt --broker-host <iot-endpoint> --broker-port 8883 --client-id ego-sim-aws --tls --ca-file <AmazonRootCA1.pem> --cert-file <device.pem.crt> --key-file <private.pem.key>
+```
+
+Bu komut acik kaldigi surece dashboard varsayilan olarak her 5 saniyede bir yenilenir ve haritadaki noktalar guncellenir.
 
 ## AWS Verisi Ile Calistirma
 
@@ -69,6 +84,7 @@ $env:DDB_CURRENT_STATE_TABLE='bus_current_state'
 
 ```powershell
 $env:DASHBOARD_API_BASE_URL='http://127.0.0.1:8011'
+$env:DASHBOARD_AUTO_REFRESH_SECONDS='5'
 .\.venv\Scripts\python.exe -m streamlit run dashboard/app.py --server.port 8511
 ```
 

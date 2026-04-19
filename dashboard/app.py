@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
+import pydeck as pdk
 import streamlit as st
 
 from dashboard.api_client import DashboardApiClient, DashboardApiError
@@ -26,61 +29,91 @@ def main() -> None:
 
     st.title("EGO Benzeri Gercek Zamanli Otobus Takip Dashboard")
     st.caption(
-        "Sentetik telemetri, MQTT akisi, bulutta isleme ve canli izleme zincirinin lokal demo ekrani."
+        "Sentetik telemetri, MQTT akisi, bulutta isleme ve canli izleme zincirinin canli demo ekrani."
     )
 
     with st.sidebar:
         st.header("Baglanti")
         base_url = st.text_input("API Base URL", value=settings.api_base_url)
         selected_line_default = settings.default_selected_line or "Tum Hatlar"
-        refresh_requested = st.button("Veriyi Yenile", use_container_width=True)
+        refresh_requested = st.button("Veriyi Yenile", width="stretch")
         st.caption("API ayakta ise kartlar ve harita bu veri kaynagindan beslenir.")
-
-    client = DashboardApiClient(base_url=base_url)
+        st.divider()
+        st.header("Canli Akis")
+        auto_refresh_enabled = st.toggle(
+            "Otomatik yenile",
+            value=settings.auto_refresh_seconds > 0,
+            help="Dashboard acik kaldigi surece veriyi belirli aralikla yeniden ceker.",
+        )
+        refresh_interval = st.slider(
+            "Yenileme araligi (sn)",
+            min_value=2,
+            max_value=15,
+            value=max(settings.auto_refresh_seconds, 5),
+            disabled=not auto_refresh_enabled,
+        )
+        st.caption(
+            "Otobus konumlari, simulator yeni veri gonderdikce haritada guncellenir."
+        )
 
     if refresh_requested:
         st.cache_data.clear()
 
     try:
-        health = _get_health(base_url)
-        summary = _get_summary(base_url)
-        lines = _get_lines(base_url)
-        buses = _get_buses(base_url)
+        initial_lines = _get_lines(base_url)
     except DashboardApiError as exc:
         _render_unavailable_state(base_url, str(exc))
         return
 
-    line_options = ["Tum Hatlar"] + [line["line_id"] for line in lines]
+    line_options = ["Tum Hatlar"] + [line["line_id"] for line in initial_lines]
     selected_line = st.sidebar.selectbox(
         "Hat Filtresi",
         options=line_options,
         index=line_options.index(selected_line_default)
         if selected_line_default in line_options
         else 0,
+        key="dashboard-line-filter",
     )
-    filtered_buses = filter_buses_by_line(buses, selected_line)
 
-    _render_status_banner(health, summary)
-    _render_summary_cards(summary)
-    _render_main_grid(lines, filtered_buses)
+    run_every = f"{refresh_interval}s" if auto_refresh_enabled else None
+
+    @st.fragment(run_every=run_every)
+    def render_live_dashboard() -> None:
+        try:
+            health = _get_health(base_url)
+            summary = _get_summary(base_url)
+            lines = _get_lines(base_url)
+            buses = _get_buses(base_url)
+        except DashboardApiError as exc:
+            _render_unavailable_state(base_url, str(exc))
+            return
+
+        filtered_buses = filter_buses_by_line(buses, selected_line)
+
+        _render_status_banner(health, summary, auto_refresh_enabled, refresh_interval)
+        _render_stream_freshness(summary)
+        _render_summary_cards(summary)
+        _render_main_grid(lines, filtered_buses)
+
+    render_live_dashboard()
 
 
-@st.cache_data(ttl=10)
+@st.cache_data(ttl=2)
 def _get_health(base_url: str) -> dict[str, object]:
     return DashboardApiClient(base_url=base_url).get_health()
 
 
-@st.cache_data(ttl=10)
+@st.cache_data(ttl=2)
 def _get_summary(base_url: str) -> dict[str, object]:
     return DashboardApiClient(base_url=base_url).get_summary()
 
 
-@st.cache_data(ttl=10)
+@st.cache_data(ttl=2)
 def _get_lines(base_url: str) -> list[dict[str, object]]:
     return DashboardApiClient(base_url=base_url).get_lines()
 
 
-@st.cache_data(ttl=10)
+@st.cache_data(ttl=2)
 def _get_buses(base_url: str) -> list[dict[str, object]]:
     return DashboardApiClient(base_url=base_url).get_buses()
 
@@ -104,8 +137,15 @@ def _render_unavailable_state(base_url: str, error_message: str) -> None:
 def _render_status_banner(
     health: dict[str, object],
     summary: dict[str, object],
+    auto_refresh_enabled: bool,
+    refresh_interval: int,
 ) -> None:
     status_label = summarize_delay_label(int(summary["delayed_bus_count"]))
+    refresh_label = (
+        f"Otomatik yenileme: acik ({refresh_interval} sn)"
+        if auto_refresh_enabled
+        else "Otomatik yenileme: kapali"
+    )
     st.markdown(
         f"""
         <div class="hero-banner">
@@ -114,7 +154,8 @@ def _render_status_banner(
             <div class="hero-title">{status_label}</div>
             <div class="hero-subtitle">
               Storage modu: <strong>{health["storage_mode"]}</strong> |
-              Son veri zamani: <strong>{summary.get("latest_timestamp") or "yok"}</strong>
+              Son veri zamani: <strong>{summary.get("latest_timestamp") or "yok"}</strong> |
+              <strong>{refresh_label}</strong>
             </div>
           </div>
         </div>
@@ -150,13 +191,15 @@ def _render_main_grid(
         if map_df.empty:
             st.info("Secili filtrede gosterilecek otobus bulunamadi.")
         else:
-            st.map(map_df[["lat", "lon"]], use_container_width=True)
-            st.caption("Harita noktalarinin sirasi secili filtredeki guncel otobus durumuna gore olusturulur.")
+            _render_map(map_df)
+            st.caption(
+                f"Haritada {len(map_df)} aktif otobus var. Isaretcilerin rengi doluluk seviyesini gosterir."
+            )
 
         st.subheader("Otobus Durumlari")
         st.dataframe(
             build_bus_table_rows(buses),
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
         )
 
@@ -227,6 +270,80 @@ def _render_bus_detail(bus: dict[str, object]) -> None:
         st.success("Bu aracta kritik gecikme gorulmuyor.")
 
 
+def _render_map(map_df) -> None:
+    center_lat = float(map_df["lat"].mean())
+    center_lon = float(map_df["lon"].mean())
+    scatter_layer = pdk.Layer(
+        "ScatterplotLayer",
+        data=map_df,
+        get_position="[lon, lat]",
+        get_fill_color="color_rgba",
+        get_line_color=[20, 52, 59, 200],
+        get_radius="marker_radius",
+        radius_min_pixels=8,
+        radius_max_pixels=18,
+        line_width_min_pixels=2,
+        pickable=True,
+        stroked=True,
+        filled=True,
+    )
+
+    deck = pdk.Deck(
+        map_style="dark",
+        initial_view_state=pdk.ViewState(
+            latitude=center_lat,
+            longitude=center_lon,
+            zoom=11.8,
+            pitch=35,
+        ),
+        layers=[scatter_layer],
+        tooltip={
+            "html": (
+                "<b>{bus_id}</b><br/>"
+                "{line_name}<br/>"
+                "Sonraki durak: {next_stop_name}<br/>"
+                "ETA: {estimated_eta_sec} sn<br/>"
+                "Doluluk: {estimated_occupancy_level}"
+            ),
+            "style": {
+                "backgroundColor": "#14343b",
+                "color": "#fefaf0",
+            },
+        },
+    )
+    st.pydeck_chart(deck, width="stretch")
+
+
+def _render_stream_freshness(summary: dict[str, object]) -> None:
+    latest_timestamp = str(summary.get("latest_timestamp") or "").strip()
+    if not latest_timestamp:
+        st.warning("Heniz canli veri gelmedi. Simulator ya da AWS akis zinciri kontrol edilmeli.")
+        return
+
+    observed_at = _parse_utc_timestamp(latest_timestamp)
+    if observed_at is None:
+        return
+
+    age_seconds = int((datetime.now(timezone.utc) - observed_at).total_seconds())
+    if age_seconds > 30:
+        st.warning(
+            (
+                "Canli veri su anda guncel gorunmuyor. "
+                f"Son veri yaklasik {age_seconds} sn once gelmis."
+            )
+        )
+    else:
+        st.success("Canli veri akisi guncel. Yeni konumlar dashboard'a dusuyor.")
+
+
+def _parse_utc_timestamp(value: str) -> datetime | None:
+    normalized = value.replace("Z", "+00:00")
+    try:
+        return datetime.fromisoformat(normalized)
+    except ValueError:
+        return None
+
+
 def _inject_styles() -> None:
     st.markdown(
         """
@@ -236,6 +353,43 @@ def _inject_styles() -> None:
               radial-gradient(circle at top left, rgba(42,157,143,0.18), transparent 28%),
               radial-gradient(circle at top right, rgba(237,174,73,0.18), transparent 24%),
               linear-gradient(180deg, #f7f4ea 0%, #f2efe6 100%);
+          }
+          .stApp h1, .stApp h2, .stApp h3 {
+            color: #14343b;
+            letter-spacing: -0.02em;
+          }
+          .stApp p, .stApp label, .stApp .stCaption {
+            color: #52606d;
+          }
+          .stApp div[data-testid="stMetric"] {
+            background: rgba(255,255,255,0.72);
+            border: 1px solid rgba(20,52,59,0.08);
+            border-radius: 18px;
+            padding: 0.85rem 1rem;
+            box-shadow: 0 8px 24px rgba(18,52,59,0.08);
+          }
+          .stApp div[data-testid="stMetricLabel"] p {
+            color: #52606d;
+            font-weight: 600;
+          }
+          .stApp div[data-testid="stMetricValue"] {
+            color: #14343b;
+          }
+          .stApp div[data-testid="stMetricDelta"] {
+            color: #5c677d;
+          }
+          .stApp div[data-testid="stDataFrame"] {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 10px 22px rgba(18,52,59,0.08);
+          }
+          section[data-testid="stSidebar"] h1,
+          section[data-testid="stSidebar"] h2,
+          section[data-testid="stSidebar"] h3,
+          section[data-testid="stSidebar"] label,
+          section[data-testid="stSidebar"] p,
+          section[data-testid="stSidebar"] .stCaption {
+            color: #eef4f5;
           }
           .hero-banner {
             background: linear-gradient(135deg, #12343b 0%, #1b4d59 100%);

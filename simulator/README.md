@@ -36,10 +36,22 @@ MQTT cikisi kullanmak icin:
 python -m simulator --steps 3 --interval-seconds 3 --output mqtt --broker-host localhost --broker-port 1883 --no-sleep
 ```
 
+Simulatoru kesintisiz calistirmak icin:
+
+```powershell
+python -m simulator --continuous --interval-seconds 3 --output mqtt --broker-host localhost --broker-port 1883
+```
+
 AWS IoT Core benzeri TLS zorunlu bir broker'a baglanmak icin:
 
 ```powershell
 python -m simulator --steps 3 --interval-seconds 3 --output mqtt --broker-host <iot-endpoint> --broker-port 8883 --client-id ego-sim-aws --tls --ca-file <AmazonRootCA1.pem> --cert-file <device.pem.crt> --key-file <private.pem.key> --no-sleep
+```
+
+AWS uzerinde dashboard'da hareket gormek icin ayni komutu surekli modda calistirmak daha uygundur:
+
+```powershell
+python -m simulator --continuous --interval-seconds 3 --output mqtt --broker-host <iot-endpoint> --broker-port 8883 --client-id ego-sim-aws --tls --ca-file <AmazonRootCA1.pem> --cert-file <device.pem.crt> --key-file <private.pem.key>
 ```
 
 Docker kullanmadan lokal broker baslatmak icin:
