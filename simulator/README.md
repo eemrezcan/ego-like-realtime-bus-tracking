@@ -36,6 +36,12 @@ MQTT cikisi kullanmak icin:
 python -m simulator --steps 3 --interval-seconds 3 --output mqtt --broker-host localhost --broker-port 1883 --no-sleep
 ```
 
+AWS IoT Core benzeri TLS zorunlu bir broker'a baglanmak icin:
+
+```powershell
+python -m simulator --steps 3 --interval-seconds 3 --output mqtt --broker-host <iot-endpoint> --broker-port 8883 --client-id ego-sim-aws --tls --ca-file <AmazonRootCA1.pem> --cert-file <device.pem.crt> --key-file <private.pem.key> --no-sleep
+```
+
 Docker kullanmadan lokal broker baslatmak icin:
 
 ```powershell
@@ -52,3 +58,4 @@ Not:
 
 - MQTT modu icin `paho-mqtt` paketinin kurulu olmasi gerekir
 - Ilk dogrulama asamasi icin `stdout` veya `file` modu yeterlidir
+- AWS IoT Core'a dogrudan baglanilacaksa genelde `8883` portu ve istemci sertifikasi gerekir

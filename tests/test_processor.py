@@ -74,7 +74,44 @@ class ProcessorTests(unittest.TestCase):
         result = lambda_handler(event, None)
 
         self.assertEqual(result["processed_count"], 1)
+        self.assertEqual(result["failed_count"], 0)
         self.assertEqual(result["records"][0]["bus_id"], "BUS_520_01")
+
+    def test_lambda_handler_skips_invalid_payload_and_processes_valid_ones(self) -> None:
+        valid_payload = {
+            "event_id": "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa",
+            "timestamp": "2026-04-06T10:00:00Z",
+            "bus_id": "BUS_520_02",
+            "line_id": "LINE_520",
+            "route_direction": "outbound",
+            "lat": 39.9415,
+            "lon": 32.8546,
+            "speed_kmh": 19.0,
+            "next_stop_id": "STOP_OPR_09",
+            "next_stop_name": "Opera",
+            "boarding_count": 2,
+        }
+        invalid_payload = {
+            "event_id": "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb",
+            "timestamp": "2026-04-06T10:00:00Z",
+            "bus_id": "BUS_INVALID",
+            "line_id": "LINE_520",
+            "route_direction": "outbound",
+            "lat": 39.9415,
+            "lon": 32.8546,
+            "speed_kmh": 19.0,
+            "next_stop_id": "STOP_OPR_09",
+            "next_stop_name": "Opera",
+            "boarding_count": 2,
+        }
+        event = {"Records": [_kinesis_record(invalid_payload), _kinesis_record(valid_payload)]}
+
+        result = lambda_handler(event, None)
+
+        self.assertEqual(result["processed_count"], 1)
+        self.assertEqual(result["failed_count"], 1)
+        self.assertEqual(result["records"][0]["bus_id"], "BUS_520_02")
+        self.assertEqual(result["failures"][0]["bus_id"], "BUS_INVALID")
 
     def test_invalid_payload_raises(self) -> None:
         invalid_payload = {
@@ -89,3 +126,8 @@ class ProcessorTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+def _kinesis_record(payload: dict[str, object]) -> dict[str, object]:
+    encoded = base64.b64encode(json.dumps(payload).encode("utf-8")).decode("utf-8")
+    return {"kinesis": {"data": encoded}}

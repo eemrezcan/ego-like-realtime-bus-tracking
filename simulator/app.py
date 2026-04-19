@@ -72,6 +72,39 @@ def build_parser() -> argparse.ArgumentParser:
         help="output=mqtt iken kullanilacak broker port.",
     )
     parser.add_argument(
+        "--client-id",
+        default="ego-sim-local",
+        help="output=mqtt iken kullanilacak MQTT client id.",
+    )
+    parser.add_argument(
+        "--mqtt-username",
+        help="MQTT broker kullanici adi. Gerekliyse verilir.",
+    )
+    parser.add_argument(
+        "--mqtt-password",
+        help="MQTT broker sifresi. Gerekliyse verilir.",
+    )
+    parser.add_argument(
+        "--tls",
+        action="store_true",
+        help="MQTT baglantisini TLS ile kur.",
+    )
+    parser.add_argument(
+        "--ca-file",
+        type=Path,
+        help="TLS icin CA sertifikasi yolu.",
+    )
+    parser.add_argument(
+        "--cert-file",
+        type=Path,
+        help="TLS icin istemci sertifikasi yolu.",
+    )
+    parser.add_argument(
+        "--key-file",
+        type=Path,
+        help="TLS icin istemci private key yolu.",
+    )
+    parser.add_argument(
         "--no-sleep",
         action="store_true",
         help="Lokal testte iterasyonlar arasinda bekleme yapma.",
@@ -94,6 +127,13 @@ def main() -> int:
         file_path=args.file_path,
         broker_host=args.broker_host,
         broker_port=args.broker_port,
+        client_id=args.client_id,
+        mqtt_username=args.mqtt_username,
+        mqtt_password=args.mqtt_password,
+        use_tls=args.tls,
+        ca_file=args.ca_file,
+        cert_file=args.cert_file,
+        key_file=args.key_file,
     )
 
     print(
@@ -126,4 +166,3 @@ def main() -> int:
         publisher.close()
 
     return 0
-

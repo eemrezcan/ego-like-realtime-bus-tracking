@@ -8,5 +8,6 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 output/
+build/
 __pdf_extract.txt
 3522 BULUT BİLİŞİM DERSİ PROJE 2.pdf

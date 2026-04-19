@@ -4,7 +4,11 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - Optional outside local development.
+    def load_dotenv(*_args: object, **_kwargs: object) -> bool:
+        return False
 
 
 @dataclass(frozen=True)
@@ -24,4 +28,3 @@ def load_dashboard_settings() -> DashboardSettings:
         api_base_url=api_base_url.rstrip("/"),
         default_selected_line=default_selected_line,
     )
-

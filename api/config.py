@@ -4,7 +4,11 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+except ImportError:  # pragma: no cover - Optional in non-local runtimes.
+    def load_dotenv(*_args: object, **_kwargs: object) -> bool:
+        return False
 
 
 @dataclass(frozen=True)
@@ -45,4 +49,3 @@ def _optional_env(name: str) -> str | None:
         return None
     stripped = value.strip()
     return stripped or None
-
