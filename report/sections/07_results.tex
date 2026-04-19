@@ -13,11 +13,6 @@ Proje sonunda dogrulanan temel kazanimlar asagidaki gibi ozetlenebilir:
     \item Yerel testler ile AWS uzerindeki gercek calisma senaryolari birlikte dogrulanmistir.
 \end{itemize}
 
-\reportfigureplaceholder
-{Dashboard genel gorunumu ve canli harita ekraninin yer alacagi bolum.}
-{fig:dashboard-placeholder}
-{BURAYA DASHBOARD EKRAN GORUNTUSU GELECEK}
-
 Projede karsilasilan temel zorluklar daha cok entegrasyon katmaninda ortaya cikmistir. AWS CLI kimlik dogrulama yontemi, IoT sertifika dosyalarinin dogru konumlandirilmasi, Lambda paketleme sureci, batch icinde hatali kayitlarin etkisinin sinirlandirilmasi ve Streamlit tarafindaki canli yenileme davranisi bu surecte cozulmesi gereken basliklar olmustur. Ancak bu zorluklar ayni zamanda sistemin raporlanabilirligini de guclendirmistir; cunku proje sadece teorik bir mimari olarak kalmamis, uygulama ve hata ayiklama asamalariyla birlikte gercek bir gelistirme surecine donusmustur.
 
 Sistemin sinirlari da aciktir. Kullanilan veri tamamen sentetiktir; dolayisiyla gercek yolcu davranisi, trafik etkisi ve arac telemetrisi tam olarak modellenmemektedir. Yogunluk ve gecikme hesaplari kural tabanli olarak uretilmistir ve bu nedenle gercek dunyadaki karmasik davranisi tam olarak temsil etmemektedir. Buna ragmen dersin hedefleri acisindan sistem yeterli bir teknik derinlik sunmaktadir. Gelecek calismalarda makine ogrenmesi tabanli ETA tahmini, gercek trafik verisi entegrasyonu, daha gelismis yolcu yogunluk modeli ve mobil istemci arayuzu gibi genisletmeler ele alinabilir.

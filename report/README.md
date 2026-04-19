@@ -21,9 +21,9 @@ Kaynakca:
 
 - `references.bib`
 
-Sekiller:
+PDF uretim scripti:
 
-- `figures/`
+- `build_report_pdf.py`
 
 ## Onerilen Kullanim
 
@@ -32,6 +32,14 @@ En rahat yol:
 1. `report/` klasorunu Overleaf'e yukle
 2. `main.tex` dosyasini ana giris dosyasi yap
 3. bolumleri sirasiyla doldur
+
+Yerelde hazir PDF uretmek icin:
+
+```powershell
+.\.venv\Scripts\python.exe report/build_report_pdf.py
+```
+
+Bu komut PDF'yi repo kokune `final-report.pdf` olarak yazar.
 
 Yerelde LaTeX kuruluysa tipik derleme sirasi:
 
@@ -44,6 +52,5 @@ pdflatex main.tex
 
 ## Notlar
 
-- Kapakta ders ve ogrenci bilgileri guncellenmeli
-- `main.tex` icindeki tarih ve kurum bilgileri teslim oncesi son kez kontrol edilmeli
-- `figures/` klasorune mimari diyagrami ve ekran goruntuleri eklenmeli
+- Kapakta ders, ogrenci ve GitHub bilgileri guncellenmistir
+- `main.tex` icindeki tarih teslim oncesi son kez kontrol edilmelidir

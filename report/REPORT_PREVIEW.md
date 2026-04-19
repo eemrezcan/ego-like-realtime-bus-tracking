@@ -12,6 +12,13 @@ Buradan rahat okuyabilirsin:
 
 EGO-Benzeri Sentetik Veri ile Gercek Zamanli Otobus Takip ve Yogunluk Analiz Sistemi
 
+## Kapak Bilgileri
+
+- Ders: BLM3522 - Bulut Bilişim Ve Uygulamaları
+- Öğrenci Numarası: 21290560
+- Öğrenci Adı Soyadı: Ahmet Emre Özcan
+- GitHub Repo: https://github.com/eemrezcan/ego-like-realtime-bus-tracking
+
 ## Ozet
 
 Bu calismada, sentetik veri ureten bir toplu tasima telemetri sistemi gelistirilmis ve bu verinin MQTT tabanli bir akis ile AWS uzerinde gercek zamanli olarak islenmesi saglanmistir. Projede otobusler, belirli araliklarla konum, hiz, hat bilgisi ve kart basimina dayali binis sayisi ureten sanal cihazlar olarak modellenmistir. Uretilen telemetri verileri AWS IoT Core uzerinden sisteme alinmis, IoT kurali araciligiyla Amazon Kinesis Data Streams katmanina aktarilmis ve AWS Lambda fonksiyonu ile zenginlestirilerek Amazon DynamoDB tablolarina yazilmistir. Islenen veriler FastAPI tabanli bir okuma katmani ile sunulmus ve Streamlit tabanli bir dashboard uzerinden canli olarak gorsellestirilmistir.
@@ -72,10 +79,6 @@ AWS IoT Core, MQTT istemcilerinden gelen mesajlari guvenli bicimde kabul eden yo
 AWS Lambda, Kinesis uzerinden gelen olaylari okuyup ETA, tahmini inis, doluluk ve gecikme bilgisini hesaplamaktadir. Yani sistemin karar ureten kismi bulut tarafinda konumlanmaktadir. Islenen veriler daha sonra biri anlik durum, digeri ise telemetri gecmisi icin kullanilan iki farkli DynamoDB tablosuna yazilmaktadir.
 
 FastAPI veri sunum katmanini, Streamlit ise son kullanici arayuzunu saglamaktadir. Bu yapi sayesinde veri kaynagi ile arayuz arasina net bir API katmani konmus, mimari hem daha moduler hem de daha savunulabilir hale getirilmistir.
-
-Buraya daha sonra su gorseller eklenecek:
-
-- BURAYA SISTEM MIMARISI DIYAGRAMI GELECEK
 
 ## Veri Modeli ve Olay Semasi
 
@@ -157,10 +160,6 @@ Dogrulama asama asama yapilmistir:
 
 Bu zincir, projenin yalnizca lokal ortamda degil, AWS uzerinde de uctan uca calistigini gostermektedir. Dogrulama surecinde yalnizca servislerin olusmasi degil, gercek veri gecisinin izlenmesi esas alinmistir. Son asamada FastAPI uzerinden okunan `latest_timestamp` bilgisinin degismesi ve Streamlit dashboard'da otobus konumlarinin yenilenmesi, zincirin son kullanici tarafinda da tamamlandigini gostermistir.
 
-Buraya daha sonra su gorseller eklenecek:
-
-- BURAYA AWS KAYNAKLARI VE DOGRULAMA EKRAN GORUNTUSU GELECEK
-
 ## Sonuclar ve Degerlendirme
 
 Sistemin temel hedefi yerine getirilmistir. Sentetik otobus telemetrisi MQTT ile buluta aktarilmis, AWS uzerinde islenmis, veritabaninda saklanmis ve canli dashboard uzerinde goruntulenmistir. Yerel ve AWS destekli dogrulama adimlarinda simulator, processor, API ve dashboard katmanlarinin birlikte calistigi gorulmustur. Ozellikle `Simulator -> AWS IoT Core -> Kinesis -> Lambda -> DynamoDB -> FastAPI -> Streamlit` zincirinin gercek veri ile dogrulanmasi, calismanin teknik gucunu artiran en onemli sonuc olmustur.
@@ -173,10 +172,6 @@ Dogrulanan temel kazanımlar:
 - Ham veri ile turetilmis veri ayrimi korundu
 - DynamoDB uzerinden anlik durum okunabildi
 - Dashboard canli veri akisina tepki verebilir hale geldi
-
-Buraya daha sonra su gorseller eklenecek:
-
-- BURAYA DASHBOARD EKRAN GORUNTUSU GELECEK
 
 Projede karsilasilan temel zorluklar daha cok entegrasyon katmaninda ortaya cikmistir. AWS CLI kimlik dogrulama yontemi, IoT sertifika dosyalarinin dogru konumlandirilmasi, Lambda paketleme sureci, batch icinde hatali kayitlarin etkisinin sinirlandirilmasi ve Streamlit tarafindaki canli yenileme davranisi bu surecte cozulmesi gereken basliklar olmustur. Ancak bu zorluklar ayni zamanda sistemin raporlanabilirligini de guclendirmistir; cunku proje sadece teorik bir mimari olarak kalmamis, uygulama ve hata ayiklama asamalariyla birlikte gercek bir gelistirme surecine donusmustur.
 

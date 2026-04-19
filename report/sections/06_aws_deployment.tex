@@ -27,9 +27,4 @@ Dagitim sirasinda olusturulan baslica AWS kaynaklari su sekildedir: \texttt{bus\
 
 Gercek ortam dogrulamasi asama asama yapilmistir. Once Lambda fonksiyonu dogrudan invoke edilerek DynamoDB'ye veri yazdigi dogrulanmistir. Ardindan Kinesis'e veri gonderilmis ve event source mapping uzerinden Lambda'nin calistigi gozlenmistir. Sonraki asamada AWS CLI ile IoT publish testi yapilmis, en son ise Python simulatorunun MQTT/TLS uzerinden AWS IoT Core'a baglanip gercek veriyi sisteme aktardigi gosterilmistir. Bu zincir, projenin yalnizca lokal ortamda degil, AWS uzerinde de uctan uca calistigini gostermektedir. Diger bir ifadeyle dogrulama, yalnizca servislerin konsolda olusmasina bakilarak degil, veri akisinin gercekten katmanlar arasinda ilerleyip ilerlemedigi izlenerek yapilmistir.
 
-\reportfigureplaceholder
-{AWS servis zincirinin veya konsol ekran goruntulerinin yer alacagi bolum.}
-{fig:aws-validation-placeholder}
-{BURAYA AWS KAYNAKLARI VE DOGRULAMA EKRAN GORUNTUSU GELECEK}
-
 Dogrulama surecinde yalnizca servislerin olusmasi degil, gercek veri gecisinin izlenmesi esas alinmistir. Bu nedenle her asamada hedeflenen kontrol su olmustur: yeni bir telemetri olayi sisteme girdiginde, bu olay sirasiyla IoT Core, Kinesis, Lambda ve DynamoDB katmanlarinda izlenebiliyor mu? Son asamada FastAPI uzerinden okunan \texttt{latest\_timestamp} bilgisinin degismesi ve Streamlit dashboard'da otobus konumlarinin yenilenmesi, zincirin son kullanici tarafinda da tamamlandigini gostermistir. Bu nokta, raporun en guclu bulgularindan biridir; cunku sistemin sadece parcali olarak degil, uc kullaniciya kadar uzanan tam hat uzerinde calistigi kanitlanmistir.

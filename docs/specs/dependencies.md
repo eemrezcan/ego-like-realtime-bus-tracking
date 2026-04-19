@@ -71,6 +71,15 @@ FastAPI uygulamasini lokal gelistirme sirasinda calistirmak icin ASGI sunucusu.
 
 Canli dashboard arayuzu icin.
 
+### `reportlab==4.4.10`
+
+Final raporun yerelde PDF olarak uretilmesi icin.
+
+Kullanilacagi yerler:
+
+- `report/build_report_pdf.py`
+- kapak ve icerik duzeni olan rapor PDF'sinin uretilmesi
+
 ## Kurulum
 
 Sanal ortam aktif edilmeden de dogrudan venv yorumlayicisi ile kurulabilir:
