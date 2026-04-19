@@ -1,0 +1,23 @@
+\section{Sonuclar ve Degerlendirme}
+
+Elde edilen sonucta sistemin temel hedefi yerine getirilmistir: sentetik otobus telemetrisi MQTT ile buluta aktarilmis, AWS uzerinde islenmis, veritabaninda saklanmis ve canli dashboard uzerinde goruntulenmistir. Hem yerel hem de AWS destekli dogrulama adimlarinda simulator, processor, API ve dashboard katmanlarinin birlikte calistigi gorulmustur. Ozellikle \texttt{Simulator -> AWS IoT Core -> Kinesis -> Lambda -> DynamoDB -> FastAPI -> Streamlit} zincirinin gercek veri ile dogrulanmasi, calismanin teknik gucunu artiran en onemli sonuc olmustur.
+
+Proje sonunda dogrulanan temel kazanimlar asagidaki gibi ozetlenebilir:
+
+\begin{itemize}[leftmargin=*]
+    \item MQTT tabanli sentetik telemetri akisi basarili bicimde kurulmustur.
+    \item AWS IoT Core uzerinden gelen veri Kinesis'e aktarilmis ve Lambda ile islenmistir.
+    \item Ham veri ile turetilmis veri ayrimi korunmustur.
+    \item DynamoDB uzerinden anlik durum okunabilmis ve dashboard'a aktarilabilmistir.
+    \item Dashboard, otomatik yenileme ile canli veri akisina tepki verebilir hale getirilmistir.
+    \item Yerel testler ile AWS uzerindeki gercek calisma senaryolari birlikte dogrulanmistir.
+\end{itemize}
+
+\reportfigureplaceholder
+{Dashboard genel gorunumu ve canli harita ekraninin yer alacagi bolum.}
+{fig:dashboard-placeholder}
+{BURAYA DASHBOARD EKRAN GORUNTUSU GELECEK}
+
+Projede karsilasilan temel zorluklar daha cok entegrasyon katmaninda ortaya cikmistir. AWS CLI kimlik dogrulama yontemi, IoT sertifika dosyalarinin dogru konumlandirilmasi, Lambda paketleme sureci, batch icinde hatali kayitlarin etkisinin sinirlandirilmasi ve Streamlit tarafindaki canli yenileme davranisi bu surecte cozulmesi gereken basliklar olmustur. Ancak bu zorluklar ayni zamanda sistemin raporlanabilirligini de guclendirmistir; cunku proje sadece teorik bir mimari olarak kalmamis, uygulama ve hata ayiklama asamalariyla birlikte gercek bir gelistirme surecine donusmustur.
+
+Sistemin sinirlari da aciktir. Kullanilan veri tamamen sentetiktir; dolayisiyla gercek yolcu davranisi, trafik etkisi ve arac telemetrisi tam olarak modellenmemektedir. Yogunluk ve gecikme hesaplari kural tabanli olarak uretilmistir ve bu nedenle gercek dunyadaki karmasik davranisi tam olarak temsil etmemektedir. Buna ragmen dersin hedefleri acisindan sistem yeterli bir teknik derinlik sunmaktadir. Gelecek calismalarda makine ogrenmesi tabanli ETA tahmini, gercek trafik verisi entegrasyonu, daha gelismis yolcu yogunluk modeli ve mobil istemci arayuzu gibi genisletmeler ele alinabilir.

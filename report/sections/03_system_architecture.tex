@@ -1,0 +1,43 @@
+\section{Sistem Mimarisi}
+
+Sistemin genel mimarisi Sekil~\ref{fig:architecture-placeholder}'de ozetlenen veri akisina dayanmaktadir:
+
+\begin{center}
+\fbox{\parbox{0.46\textwidth}{
+Bus Simulator $\rightarrow$ MQTT $\rightarrow$ AWS IoT Core $\rightarrow$ Kinesis \\
+$\rightarrow$ AWS Lambda $\rightarrow$ DynamoDB $\rightarrow$ FastAPI $\rightarrow$ Streamlit
+}}
+\end{center}
+
+\reportfigureplaceholder
+{Projenin genel sistem mimarisi.}
+{fig:architecture-placeholder}
+{BURAYA SISTEM MIMARISI DIYAGRAMI GELECEK}
+
+\begin{table}[!t]
+    \caption{Sistem katmanlari ve temel gorevleri}
+    \label{tab:architecture-layers}
+    \centering
+    \footnotesize
+    \begin{tabular}{p{0.16\textwidth} p{0.27\textwidth}}
+        \toprule
+        Katman & Gorev \\
+        \midrule
+        Simulator & Sentetik telemetri uretimi \\
+        AWS IoT Core & MQTT giris noktasi ve cihaz-bulut haberlesmesi \\
+        Kinesis Data Streams & Gercek zamanli veri yutma katmani \\
+        AWS Lambda & Zenginlestirme ve is kurallari \\
+        DynamoDB & Anlik durum ve gecmis olay depolama \\
+        FastAPI & Okuma API'si ve servis katmani \\
+        Streamlit & Canli dashboard ve harita gorsellestirmesi \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Bu mimaride simulator katmani, otobusleri sanal veri ureticileri olarak modellemektedir. Her otobus belirli bir hatta, yon bilgisine ve rota segmentine bagli olarak konum guncellemekte; ardindan bu veri MQTT topic'i uzerinden yayimlanmaktadir. MQTT'nin publish/subscribe yapisi, dusuk ek yuk ve cihaz-bulut haberlesmesine uygunlugu nedeniyle tercih edilmistir \cite{mqtt311}. Bu secim, otobuslerin birer IoT cihazi gibi davranmasini saglayarak proje senaryosunu daha inandirici hale getirmektedir. AWS IoT Core, MQTT istemcilerinden gelen mesajlari guvenli bicimde kabul ederek bu katmanin yonetilen giris noktasi olarak kullanilmistir \cite{aws_iot_mqtt}.
+
+IoT Core'a gelen mesajlar, bir IoT kurali yardimiyla Amazon Kinesis Data Streams'e yonlendirilmektedir. AWS IoT Rules mekanizmasi, MQTT akisi uzerindeki mesajlarin filtrelenerek veya oldugu gibi diger AWS servislerine aktarilmasina olanak tanimaktadir \cite{aws_iot_rules}. Kinesis Data Streams ise telemetri verisini surekli ve dusuk gecikmeli sekilde kabul eden akis omurgasi olarak secilmistir \cite{kinesis_intro}. Bu secim sayesinde veri girisi ile isleme katmani birbirinden ayrilmis; dolayisiyla sisteme yeni veri kaynagi eklense bile isleme mantigi yeniden tasarlanmak zorunda kalmamistir. Kinesis'in burada bir tampon ve dagitim katmani olarak kullanilmasi, olay akisinin daha dayanikli ve izlenebilir olmasina da katki saglamistir.
+
+Kinesis uzerine baglanan AWS Lambda fonksiyonu, her batch icindeki kayitlari okuyarak zenginlestirme islemini gerceklestirmektedir. Lambda'nin Kinesis ile tumlesik calisma modeli, shard bazli polling ve batch isleme davranisi ile gercek zamanli veri islemede uygun bir sunucusuz yapi saglamaktadir \cite{lambda_kinesis}. Bu katmanda ETA, tahmini inis miktari, doluluk skoru ve gecikme bilgisi hesaplanmakta; yani sistemin karar ureten kismi bulut tarafinda konumlanmaktadir. Islenen veriler daha sonra DynamoDB tablolarina yazilmaktadir. Burada biri otobuslerin son durumunu, digeri ise telemetri gecmisini tutan iki tablo kullanilmistir. Bu ayrim, dashboard icin hizli okuma performansi ile gecmise donuk analiz ihtiyacini ayni anda karsilamaktadir.
+
+Sistemin son katmani ise veri sunumu icin olusturulmustur. FastAPI tabanli servis, DynamoDB'den okudugu veriyi REST endpoint'leri uzerinden dashboard'a sunmaktadir. Streamlit arayuzu ise otobus listesi, hat ozetleri, durum kartlari ve canli harita ile son kullanici gorsellestirmesini saglamaktadir. Bu yapi sayesinde veri kaynagi ile arayuz arasina net bir API katmani konmus, mimari hem daha moduler hem de daha savunulabilir hale getirilmistir. Sonuc olarak mimari, veri uretimi ile veri sunumu arasinda acik sorumluluk sinirlari kurmakta; bu da projenin yalnizca calisan degil, ayni zamanda duzenli aciklanabilir bir sistem olmasini saglamaktadir.

@@ -1,0 +1,35 @@
+\section{AWS Dagitimi ve Gercek Ortam Dogrulamasi}
+
+Sistemin AWS dagitiminda erisim yonetimi icin klasik access key yerine IAM Identity Center tabanli SSO yapisi kullanilmistir. Bu tercih, guvenlik acisindan daha duzgun ve yonetilebilir bir gelistirme ortami saglamistir. Kaynaklar \texttt{eu-central-1} bolgesinde olusturulurken, SSO yapisinin \texttt{us-east-1} tarafinda tanimli oldugu not edilmistir. Bu ayrim, dagitim surecinin ilk adimlarinda karsilasilan temel operasyonel noktalardan biri olmustur. Rapor acisindan bu detay onemlidir; cunku sistem yalnizca servis secimiyle degil, bulut uzerindeki kimlik ve erisim yonetimiyle birlikte gercek bir dagitim senaryosuna yaklastirilmistir.
+
+\begin{table}[!t]
+    \caption{AWS tarafinda olusturulan temel kaynaklar}
+    \label{tab:aws-resources}
+    \centering
+    \footnotesize
+    \begin{tabular}{p{0.19\textwidth} p{0.24\textwidth}}
+        \toprule
+        Kaynak Turu & Kaynak Adi \\
+        \midrule
+        DynamoDB tablo & \texttt{bus\_current\_state} \\
+        DynamoDB tablo & \texttt{telemetry\_history} \\
+        Kinesis stream & \texttt{ego-bus-telemetry-stream} \\
+        Lambda rol & \texttt{ego-bus-lambda-role} \\
+        Lambda fonksiyon & \texttt{ego-bus-processor} \\
+        IoT rol & \texttt{ego-bus-iot-rule-role} \\
+        IoT rule & \texttt{ego\_bus\_telemetry\_to\_kinesis} \\
+        IoT thing & \texttt{ego-bus-simulator-device} \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Dagitim sirasinda olusturulan baslica AWS kaynaklari su sekildedir: \texttt{bus\_current\_state}, \texttt{telemetry\_history}, \texttt{ego-bus-telemetry-stream}, \texttt{ego-bus-lambda-role}, \texttt{ego-bus-processor}, \texttt{ego-bus-iot-rule-role}, \texttt{ego\_bus\_telemetry\_to\_kinesis} ve \texttt{ego-bus-simulator-device}. Bu kaynaklarin olusturulmasi icin repo icinde PowerShell tabanli CLI scriptleri hazirlanmis ve boylece tekrar edilebilir bir dagitim iskeleti kurulmustur. Bu durum, projenin yalnizca tek seferlik bir demonstrasyon olarak degil, ayni adimlarla yeniden kurulabilecek bir bulut ortami olarak dusunuldugunu gostermektedir.
+
+Gercek ortam dogrulamasi asama asama yapilmistir. Once Lambda fonksiyonu dogrudan invoke edilerek DynamoDB'ye veri yazdigi dogrulanmistir. Ardindan Kinesis'e veri gonderilmis ve event source mapping uzerinden Lambda'nin calistigi gozlenmistir. Sonraki asamada AWS CLI ile IoT publish testi yapilmis, en son ise Python simulatorunun MQTT/TLS uzerinden AWS IoT Core'a baglanip gercek veriyi sisteme aktardigi gosterilmistir. Bu zincir, projenin yalnizca lokal ortamda degil, AWS uzerinde de uctan uca calistigini gostermektedir. Diger bir ifadeyle dogrulama, yalnizca servislerin konsolda olusmasina bakilarak degil, veri akisinin gercekten katmanlar arasinda ilerleyip ilerlemedigi izlenerek yapilmistir.
+
+\reportfigureplaceholder
+{AWS servis zincirinin veya konsol ekran goruntulerinin yer alacagi bolum.}
+{fig:aws-validation-placeholder}
+{BURAYA AWS KAYNAKLARI VE DOGRULAMA EKRAN GORUNTUSU GELECEK}
+
+Dogrulama surecinde yalnizca servislerin olusmasi degil, gercek veri gecisinin izlenmesi esas alinmistir. Bu nedenle her asamada hedeflenen kontrol su olmustur: yeni bir telemetri olayi sisteme girdiginde, bu olay sirasiyla IoT Core, Kinesis, Lambda ve DynamoDB katmanlarinda izlenebiliyor mu? Son asamada FastAPI uzerinden okunan \texttt{latest\_timestamp} bilgisinin degismesi ve Streamlit dashboard'da otobus konumlarinin yenilenmesi, zincirin son kullanici tarafinda da tamamlandigini gostermistir. Bu nokta, raporun en guclu bulgularindan biridir; cunku sistemin sadece parcali olarak degil, uc kullaniciya kadar uzanan tam hat uzerinde calistigi kanitlanmistir.

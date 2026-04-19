@@ -1,0 +1,33 @@
+\section{Veri Modeli ve Olay Semasi}
+
+Sistem veri modeli uc ana bilesenden olusmaktadir: hatlar, duraklar ve rotalar. \texttt{data/} klasoru altinda tanimlanan JSON dosyalari, simulatorun hangi otobusun hangi hat uzerinde hareket edecegini, hangi duraklara yaklasacagini ve ETA hesaplamasinda hangi segment bilgilerini kullanacagini belirlemektedir. Bu yapi, simulator ile bulut isleme katmani arasinda ortak bir referans modeli olusturmaktadir. Baska bir ifadeyle veri modeli, yalnizca test verisi tutan statik bir klasor degil; hem simulatorun hareket mantigini hem de bulut tarafindaki hesaplama baglamini belirleyen cekirdek tasarim katmanidir.
+
+Ham olay semasi, MQTT uzerinden gonderilen telemetri paketinin catisini tanimlamaktadir. Bu pakette yer alan alanlar; otobus kimligi, hat kimligi, yon bilgisi, konum, hiz, bir sonraki durak ve kart basimina dayali binis sayisidir. Olay semasinin ayri bir JSON Schema dosyasi ile tanimlanmasi, simulator, Lambda ve API katmanlari arasindaki veri sozlesmesini sabitlemistir. Boylece bir katmanda yapilan degisiklik diger katmanlar icin belirsizlik uretmemektedir. Bu karar, ozellikle proje buyudukce alan isimlerinin dagilmasini ve katmanlar arasinda uyumsuz veri beklentileri olusmasini onleyen kritik bir tasarim adimidir.
+
+Projede kullanilan ham olay alanlari su sekildedir:
+
+\begin{itemize}[leftmargin=*]
+    \item \texttt{event\_id}: olay icin tekil kimlik
+    \item \texttt{timestamp}: olay zamani
+    \item \texttt{bus\_id}: otobus kimligi
+    \item \texttt{line\_id}: hat kimligi
+    \item \texttt{route\_direction}: gidis veya donus bilgisi
+    \item \texttt{lat}, \texttt{lon}: anlik konum
+    \item \texttt{speed\_kmh}: anlik hiz
+    \item \texttt{next\_stop\_id}, \texttt{next\_stop\_name}: siradaki durak
+    \item \texttt{boarding\_count}: o anda gozlenen binis sayisi
+\end{itemize}
+
+Bu projedeki kritik tasarim karari, olculen veri ile tahmin edilen verinin ayrilmasidir. Binis sayisi simulator tarafinda dogrudan uretilirken, inis miktari bulutta tahmin edilmekte ve o ana kadarki doluluk skoru ile birlikte yeniden hesaplanmaktadir. ETA de yine konum, hiz ve durak mesafesi bilgisi uzerinden Lambda tarafinda uretilmektedir. Bu tercih, sistemin basit bir sahte veri gosteriminden cikarak gercek zamanli veri zenginlestirme mimarisine donusmesini saglamistir. Ayni zamanda raporun iddiasini daha durust hale getirmektedir; cunku sistem gercekten olculmeyen bir veriyi olculmus gibi gostermemekte, hangi bilginin gozlemlendigi hangi bilginin tahmin edildigi acik bicimde ayristirilmaktadir.
+
+Bulut tarafinda uretilen turetilmis alanlar ise su sekildedir:
+
+\begin{itemize}[leftmargin=*]
+    \item \texttt{estimated\_eta\_sec}
+    \item \texttt{estimated\_alighting\_count}
+    \item \texttt{estimated\_occupancy\_score}
+    \item \texttt{estimated\_occupancy\_level}
+    \item \texttt{is\_delayed}
+\end{itemize}
+
+Doluluk modeli, bir onceki durum ile yeni binis sayisinin birlestirilmesi uzerine kurulmustur. Ancak otobuslerde gercek bir inis sensori veya cikis kart basimi bulunmadigi varsayildigi icin, inis miktari kural tabanli olarak tahmin edilmektedir. Bu nedenle veri modeli yalnizca depolama amacli bir tanim olarak degil, sistemin akademik durustlugunu koruyan bir cerceve olarak da degerlidir. Sonuc olarak sistem, gercek veriyi kopyalamaya calisan bir uygulama degil; gozlenen veri ile yorumlanan veri arasindaki farki gosteren bir bulut bilisim prototipidir.

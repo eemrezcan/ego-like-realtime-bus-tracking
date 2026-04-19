@@ -1,0 +1,97 @@
+\documentclass[conference,a4paper]{IEEEtran}
+\IEEEoverridecommandlockouts
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[turkish,english]{babel}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{float}
+
+\newcommand{\reportfigureplaceholder}[3]{
+\begin{figure}[H]
+    \centering
+    \fcolorbox{red}{white}{
+        \parbox[c][0.18\textheight][c]{0.44\textwidth}{
+            \centering\color{red}\bfseries #3
+        }
+    }
+    \caption{#1}
+    \label{#2}
+\end{figure}
+}
+
+\title{EGO-Benzeri Sentetik Veri ile Gercek Zamanli Otobus Takip ve Yogunluk Analiz Sistemi}
+
+\author{
+\IEEEauthorblockN{Ahmet Emre Ozcan}
+\IEEEauthorblockA{
+Bulut Bilisim Proje 2 \\
+Ankara, Turkiye \\
+ogrenci\_numarasi@example.com
+}
+}
+
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    {\Large Universite / Fakultesi \par}
+    \vspace{1.0cm}
+    {\large Ders Adi: Bulut Bilisim \par}
+    \vspace{1.5cm}
+    {\Huge\bfseries EGO-Benzeri Sentetik Veri ile Gercek Zamanli Otobus Takip ve Yogunluk Analiz Sistemi \par}
+    \vspace{1.2cm}
+    {\large Final Proje Raporu \par}
+    \vfill
+
+    \begin{tabular}{ll}
+        Ogrenci Adi Soyadi: & Ahmet Emre Ozcan \\
+        Ogrenci Numarasi: & 20XXXXXXXX \\
+        Ders Sorumlusu: & Dr. XXXXXXXXX \\
+        Teslim Tarihi: & 19 Nisan 2026 \\
+    \end{tabular}
+
+    \vfill
+    {\large Ankara, 2026 \par}
+\end{titlepage}
+
+\pagenumbering{roman}
+\setcounter{page}{1}
+\onecolumn
+\tableofcontents
+\newpage
+
+\twocolumn
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\maketitle
+
+\begin{abstract}
+\input{sections/00_abstract}
+\end{abstract}
+
+\begin{IEEEkeywords}
+MQTT, AWS IoT Core, Kinesis Data Streams, AWS Lambda, DynamoDB, FastAPI, Streamlit, real-time bus tracking
+\end{IEEEkeywords}
+
+\input{sections/01_introduction}
+\input{sections/02_problem_scope}
+\input{sections/03_system_architecture}
+\input{sections/04_data_model}
+\input{sections/05_implementation}
+\input{sections/06_aws_deployment}
+\input{sections/07_results}
+\input{sections/08_conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

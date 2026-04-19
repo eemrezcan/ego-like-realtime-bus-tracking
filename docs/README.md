@@ -21,8 +21,10 @@ Projeye yeniden baslarken veya yeni bir karar alirken dosyalari su sirayla okuma
 13. `specs/dashboard-design.md`
 14. `planning/aws-rollout-plan.md`
 15. `specs/aws-environment.md`
-16. `worklogs/05.04.2026.md`
-17. `worklogs/19.04.2026.md`
+16. `planning/report-roadmap.md`
+17. `specs/report-sources.md`
+18. `worklogs/05.04.2026.md`
+19. `worklogs/19.04.2026.md`
 
 ## Ilk Baslangic Noktasi
 

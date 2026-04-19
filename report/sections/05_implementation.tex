@@ -1,0 +1,21 @@
+\section{Gercekleme Ayrintilari}
+
+\subsection{Simulator Katmani}
+
+Simulator, Python ile gelistirilmis bir olay uretim aracidir. Bu katman, veri modelinde tanimlanan hat, durak ve rota bilgilerini okuyarak her hat icin birden fazla otobus nesnesi uretmektedir. Her iterasyonda otobuslerin segment uzerindeki konumu guncellenmekte, hizlari yeniden hesaplanmakta ve duraga bagli olarak binis sayisi uretilmektedir. Olusan payload, stdout, dosya veya MQTT modlari ile yayinlanabilmektedir. Projenin son asamasinda simulatora \texttt{--continuous} secenegi eklenmis ve boylece dashboard tarafinda surekli veri akisi gozlenebilir hale gelmistir. AWS dogrulama asamasinda MQTT/TLS modu kullanilmis ve simulator AWS IoT Core endpoint'ine istemci sertifikasi ile baglanmistir.
+
+\subsection{Bulut Isleme Katmani}
+
+Bulut isleme mantigi AWS Lambda uzerinde calisan Python kodu ile uygulanmistir. Lambda, Kinesis uzerinden gelen telemetri paketlerini alip once dogrulamakta, daha sonra ETA, tahmini inis, doluluk skoru ve gecikme bilgisini hesaplamaktadir. ETA hesabi, mevcut konum, hiz ve siradaki duraga ait segment bilgisi kullanilarak uretilmektedir. Tahmini inis miktari ise mevcut doluluk ve durak baglamina dayali kural tabanli bir yaklasimla elde edilmektedir. Batch isleme mantiginda hata toleransi eklenmis; boylece gecersiz bir kayit geldigi durumda tum batch yerine yalnizca hatali kayit atlanmistir. Bu karar, akis hattinin daha dayanikli calismasini saglamistir. Isleme kurallarinin ana hedefi, ham veriyi olabildigince az varsayimla anlamli operasyonel bilgiye donusturmektir.
+
+\subsection{DynamoDB Tasarimi}
+
+Depolama katmaninda iki farkli tablo kullanilmistir. \texttt{bus\_current\_state} tablosu, her otobusun en son durumunu tutmakta ve dashboard icin hizli okuma katmani olusturmaktadir. \texttt{telemetry\_history} tablosu ise gecmis telemetri olaylarini saklamaktadir. Bu iki tabloya ayrilmis tasarim, operasyonel izleme ile tarihsel kayit ihtiyacini birbirinden ayirmakta ve sistemin hem canli arayuz hem de raporlama acisindan daha kullanisli olmasini saglamaktadir. DynamoDB'nin yonetilen, sunucusuz ve dusuk gecikmeli yapisi, bu tip operasyonel is yukleri icin uygun gorulmustur \cite{dynamodb_intro}.
+
+\subsection{API Katmani}
+
+FastAPI ile gelistirilen okuma katmani, dashboard'un veritabanina dogrudan baglanmasini engelleyen bir soyutlama gorevi gormektedir. \texttt{/health}, \texttt{/summary}, \texttt{/buses}, \texttt{/buses/\{id\}} ve \texttt{/lines} endpoint'leri ile sistemin durumu, toplu ozetler ve tekil arac bilgileri sunulmaktadir. Bu yapi sayesinde veri sunumu katmani ile depolama katmani birbirinden ayrilmis, ayrica yerel dosya modu ile DynamoDB modu arasinda gecis de kolaylastirilmistir \cite{fastapi_first_steps}. Boylece ayni dashboard hem lokal dogrulama asamasinda hem de AWS destekli gercek ortamda tekrar kullanilabilmistir.
+
+\subsection{Dashboard Katmani}
+
+Streamlit tabanli dashboard, sistemin son kullaniciya donuk gorevini ustlenmektedir. Arayuzde sistem durumu banner'i, ozet metrik kartlari, hat bazli kartlar, otobus tablosu ve pydeck tabanli canli harita bulunmaktadir. Son asamada harita gorunurlugu artirilmis, otomatik yenileme davranisi eklenmis ve veri tazeligi gostergesi olusturulmustur. Harita gorsellestirmesinde Streamlit'in \texttt{st.pydeck\_chart} bileseni kullanilmistir \cite{streamlit_pydeck}. Ayrica dashboard ile veritabaninin dogrudan degil, FastAPI uzerinden haberlesmesi saglanarak mimari katmanlasma korunmustur. Bu tasarim karari, hem test edilebilirligi hem de demo sirasinda veri akisinin daha anlasilir sunulmasini kolaylastirmistir.
