@@ -138,6 +138,27 @@ Kinesis ile Lambda arasinda olusturulan event source mapping:
 
 Bu baglanti sayesinde stream'e dusen kayitlar otomatik olarak Lambda tarafinda islenmektedir.
 
+### AWS IoT Core
+
+Olusturulan IoT kaynaklari:
+
+- IoT rule role: `ego-bus-iot-rule-role`
+- IoT topic rule: `ego_bus_telemetry_to_kinesis`
+- simulator thing: `ego-bus-simulator-device`
+- simulator policy: `ego-bus-simulator-policy`
+
+IoT Core data endpoint:
+
+- `a17fmdwf2mfy6c-ats.iot.eu-central-1.amazonaws.com`
+
+Topic rule SQL:
+
+- `SELECT * FROM 'ego-sim/v1/bus/telemetry'`
+
+Bu kuralin amaci, MQTT topic'ine gelen telemetri verisini `ego-bus-telemetry-stream` uzerine aktarmaktir.
+
+Simulator cihazi icin bir istemci sertifikasi, private key ve public key olusturulmus; bu dosyalar yerel gelistirme ortaminda `build/aws/iot/device/` altina kaydedilmistir.
+
 ## Neden Once Bu Kaynaklar Kuruldu
 
 AWS tarafina geciste su strateji izlendi:
@@ -164,11 +185,32 @@ Bu test, asagidaki zincirin calistigini gostermektedir:
 
 `Kinesis -> Lambda -> DynamoDB`
 
+### 3. AWS IoT Core Uzerinden Uctan Uca Test
+
+AWS CLI ile IoT data endpoint'ine gecerli bir telemetri payload'i publish edilmis ve sonrasinda `bus_current_state` tablosunda `BUS_520_04` icin beklenen veri gorulmustur.
+
+Bu test, asagidaki zincirin calistigini gostermektedir:
+
+`IoT Core -> Kinesis -> Lambda -> DynamoDB`
+
+### 4. Gercek Simulator Ile MQTT/TLS Testi
+
+Simulator, olusturulan device sertifikasi, private key ve `AmazonRootCA1.pem` kullanilarak `8883` portu uzerinden AWS IoT Core'a baglanmistir.
+
+Ilk denemede uzak broker icin publish guvenilirligi dusuk kalmis, sonrasinda MQTT publish tarafinda `QoS 1` ve `wait_for_publish()` kullanilarak iletim garanti altina alinmistir.
+
+Bu iyilestirme sonrasi `bus_current_state` tablosunda `BUS_510_01` icin simulator tarafindan uretilmis veri gorulmustur.
+
+Bu, hedeflenen mimarinin asagidaki zincirle gerceklestigini gostermektedir:
+
+`Simulator -> AWS IoT Core -> Kinesis -> Lambda -> DynamoDB`
+
 ## Karsilasilan Teknik Notlar
 
 - Ilk Lambda deploy denemesinde `AWS_REGION` ortam degiskenini elle set etmeye calismak hata vermistir. Bu alan Lambda tarafinda rezerve oldugu icin script'ten cikarilmistir.
 - Ilk paketlemede `simulator/` klasoru zip icine alinmadigi icin `No module named 'simulator'` hatasi alinmistir. Paketleme script'i buna gore guncellenmistir.
 - Ilk Kinesis denemelerinde gecersiz `bus_id` degerleri kullanildigi icin batch hata ile dusmustur. Sonrasinda `lambda_handler` kayit bazli toleransli hale getirilmis ve gecersiz payload'lar loglanip diger kayitlarin islenmesi saglanmistir.
+- IoT Core uzerinden gercek simulator publish testinde uzak broker'a cikis yapan istemci cok hizli kapanabildigi icin MQTT publish katmaninda `QoS 1` ve `wait_for_publish()` kullanilmistir.
 
 ## Repo Tarafindaki AWS Dosyalari
 
@@ -180,8 +222,13 @@ Bu kurulumlari tekrar edilebilir hale getirmek icin repoda su dosyalar tutulur:
 - `infra/aws/cli/create-lambda-role.ps1`
 - `infra/aws/cli/create-or-update-lambda.ps1`
 - `infra/aws/cli/create-event-source-mapping.ps1`
+- `infra/aws/cli/create-iot-rule-role.ps1`
+- `infra/aws/cli/create-or-update-topic-rule.ps1`
+- `infra/aws/cli/create-iot-simulator-device.ps1`
+- `infra/aws/cli/download-amazon-root-ca.ps1`
 - `infra/aws/iam/lambda-trust-policy.json`
 - `infra/aws/iam/lambda-inline-policy.json`
+- `infra/aws/iam/iot-rule-trust-policy.json`
 - `infra/aws/iot/telemetry-topic-rule.sql`
 - `infra/aws/iot/simulator-device-policy.json`
 - `docs/planning/aws-rollout-plan.md`
@@ -190,4 +237,4 @@ Bu dosyalar final raporda "kurulum tekrar edilebilirligi" ve "mimari disiplin" a
 
 ## Final Rapora Koyulabilecek Ozet Metin
 
-`AWS tarafinda kimlik dogrulama icin IAM Identity Center (SSO) kullanilmistir. Kaynaklar eu-central-1 bolgesinde olusturulmus; iki adet DynamoDB tablosu (bus_current_state, telemetry_history), bir adet Kinesis Data Stream (ego-bus-telemetry-stream), bir adet Lambda function (ego-bus-processor) ve buna bagli IAM execution role aktif hale getirilmistir. Kinesis ile Lambda arasinda event source mapping kurularak verinin otomatik islenmesi saglanmis, ornek telemetri kayitlari uzerinden verinin bulutta islenip DynamoDB'ye yazildigi dogrulanmistir.`
+`AWS tarafinda kimlik dogrulama icin IAM Identity Center (SSO) kullanilmistir. Kaynaklar eu-central-1 bolgesinde olusturulmus; iki adet DynamoDB tablosu (bus_current_state, telemetry_history), bir adet Kinesis Data Stream (ego-bus-telemetry-stream), bir adet Lambda function (ego-bus-processor), buna bagli IAM execution role, bir adet IoT topic rule ve simulator cihaz sertifikasi aktif hale getirilmistir. Kinesis ile Lambda arasinda event source mapping kurularak verinin otomatik islenmesi saglanmis; hem AWS CLI ile IoT Core uzerinden, hem de dogrudan simulator uygulamasi ile MQTT/TLS uzerinden gonderilen ornek telemetri kayitlarinin bulutta islenip DynamoDB'ye yazildigi dogrulanmistir.`

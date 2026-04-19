@@ -17,6 +17,9 @@ Bu klasordeki dosyalarla sunlari kontrollu sekilde kurmak:
 - Lambda role ve policy
 - Lambda paketleme ve deploy
 - Kinesis -> Lambda event source mapping
+- IoT rule role ve simulator device policy
+- IoT topic rule ve simulator certificate
+- IoT Core TLS baglantisi icin root CA indirme
 - IoT topic rule
 
 ## Not

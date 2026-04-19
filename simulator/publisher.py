@@ -70,7 +70,8 @@ class MqttPublisher:
 
     def publish(self, topic: str, payload: dict[str, object]) -> None:
         body = json.dumps(payload, separators=(",", ":"))
-        result = self._client.publish(topic, body, qos=0)
+        result = self._client.publish(topic, body, qos=1)
+        result.wait_for_publish()
         if result.rc != 0:
             raise RuntimeError(f"MQTT publish basarisiz oldu. rc={result.rc}")
 
